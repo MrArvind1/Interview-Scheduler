@@ -1,0 +1,1 @@
+web: python manage.py collectstatic --no-input; gunicorn Interview_Scheduler.wsgi --log-file - --log-level debug

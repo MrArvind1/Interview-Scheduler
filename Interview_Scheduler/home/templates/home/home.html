@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
+</head>
+<body>
+    <div>
+        <form method="POST" id="add_interview">
+            {% csrf_token %}
+            <h3>Schedule Interview</h3>
+            <div>
+                Click <a href="{% url 'fetchLatestStudentData' %}" target="_blank" >here</a> to update latest student data
+            </div><br>
+            <div>
+                <label for="file"><b>Upload a csv or excel file (Sample <a href="{% static 'students.xlsx' %}">file</a>)</b></label>
+                <input type="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" id="file" class="input-field" name="file" required>
+            </div><br>
+            <div>
+                <label for="start_time"><b>Start Time</b></label>
+                <input type="datetime-local" id="start_time" name="start_time" required>
+            </div><br>
+            <div>
+                <label for="end_time"><b>End Time</b></label>
+                <input type="datetime-local" id="end_time" name="end_time" required>
+            </div><br>
+            <div>
+                <input type="submit" value="Submit">
+            </div>
+        </form>
+    </div>
+
+    <br><br>
+    <p>********************************************************</p>
+    <br><br>
+
+    <h3>Interviews</h3>
+    <table id="table_id" class="display">
+        <thead>
+            <tr>
+                <th>Student ID</th>
+                <th>Student Name</th>
+                <th>Email</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>-</th>
+                <th>-</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for interview in interviews %}
+            <tr>
+                <td>{{interview.student.id}}</td>
+                <td>{{interview.student.name}}</td>
+                <td>{{interview.student.email}}</td>
+                <td>{{interview.start_time}}</td>
+                <td>{{interview.end_time}}</td>
+                <td><button onclick="setIDAndGetInterviewData({{interview.id}})">Edit</button></td>
+                <td><a href="{% url 'deleteInterview' interview_id=interview.id %}" target="_blank">Delete</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+
+    <div class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h2><b>Edit Interview Schedule</b></h2>
+                    <form method="POST" id="edit_interview">
+                        {% csrf_token %}
+                        <input type="hidden" id="interview_id" value="0" required>
+                        <div>
+                            <label for="for"><b>Student ID</b></label>
+                            <input type="text" id="for" name="for" placeholder="Select student to edit" readonly>
+                        </div><br>
+                        <div>
+                            <label for="start_time"><b>Start Time <p id="st"></p></b></label>
+                            <input type="datetime-local" id="start_time1" name="start_time" required>
+                        </div><br>
+                        <div>
+                            <label for="end_time"><b>End Time <p id="et"></p></b></label>
+                            <input type="datetime-local" id="end_time1" name="end_time" required>
+                        </div><br>
+                        <div>
+                            <input type="submit" value="Submit">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
+    <script src="{% static 'script.js' %}"></script>
+</body>
+</html>
